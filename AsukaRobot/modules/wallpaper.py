@@ -130,7 +130,7 @@ def wall(update, context):
 WALL_HANDLER = DisableAbleCommandHandler("wall", wall)
 dispatcher.add_handler(WALL_HANDLER)
 
-api_key = ('WSQTSD-QAHUBK-VEXZHT-BPZHYD-ARQ) # get it from @arqrobot
+api_key = ('WSQTSD-QAHUBK-VEXZHT-BPZHYD-ARQ') # get it from @arqrobot
 api_url = "https://thearq.tech"
 session = ClientSession()
 arq = ARQ(api_url, api_key, session)
