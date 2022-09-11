@@ -82,30 +82,30 @@ class AsukaRobot(Client):
 
         LOGGER.info("Bot Started Successfully!\n")
 
-    async def stop(self):
-        """Stop the bot and send a message to EVENT_LOGS telling that the bot has stopped."""
-        runtime = strftime("%Hh %Mm %Ss", gmtime(time() - UPTIME))
-        LOGGER.info("Uploading logs before stopping...!\n")
+#    async def stop(self):
+#        """Stop the bot and send a message to EVENT_LOGS telling that the bot has stopped."""
+#        runtime = strftime("%Hh %Mm %Ss", gmtime(time() - UPTIME))
+#        LOGGER.info("Uploading logs before stopping...!\n")
         # Send Logs to EVENT_LOGS and LOG_CHANNEL
-        await self.send_document(
-            EVENT_LOGS,
-            document=LOGFILE,
-            caption=(
-                "Bot Stopped!\n\n" f"Uptime: {runtime}\n" f"<code>{LOG_DATETIME}</code>"
-            ),
-        )
-        if EVENT_LOGS:
+#        await self.send_document(
+#            EVENT_LOGS,
+#            document=LOGFILE,
+#            caption=(
+#                "Bot Stopped!\n\n" f"Uptime: {runtime}\n" f"<code>{LOG_DATETIME}</code>"
+#            ),
+#        )
+#        if EVENT_LOGS:
             # EVENT_LOGS is not necessary
-            await self.send_document(
-                EVENT_LOGS,
-                document=LOGFILE,
-                caption=f"Uptime: {runtime}",
-            )
-        await super().stop()
-        MongoDB.close()
-        LOGGER.info(
-            f"""Bot Stopped.
-            Logs have been uploaded to the EVENT_LOGS Group!
-            Runtime: {runtime}s\n
-        """,
-        )
+#            await self.send_document(
+#                EVENT_LOGS,
+#                document=LOGFILE,
+#                caption=f"Uptime: {runtime}",
+#            )
+#        await super().stop()
+#        MongoDB.close()
+#        LOGGER.info(
+#            f"""Bot Stopped.
+#            Logs have been uploaded to the EVENT_LOGS Group!
+#            Runtime: {runtime}s\n
+#        """,
+#        )
