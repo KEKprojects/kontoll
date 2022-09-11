@@ -2,9 +2,9 @@ import logging
 import os
 import sys
 import time
-import datetime
 import spamwatch
 import aiohttp
+from datetime import datetime
 from AsukaRobot.services.quoteapi import Quotly
 import telegram.ext as tg
 from redis import StrictRedis
