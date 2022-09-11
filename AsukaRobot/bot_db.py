@@ -12,7 +12,7 @@ from AsukaRobot import (
     LOG_DATETIME,
     LOGFILE,
     LOGGER,
-    MESSAGE_DUMP,
+    EVENT_LOGS,
     NO_LOAD,
     UPTIME,
     WORKERS,
@@ -24,8 +24,8 @@ from config import config
 
 INITIAL_LOCK = RLock()
 
-# Check if MESSAGE_DUMP is correct
-if MESSAGE_DUMP == -100 or not str(MESSAGE_DUMP).startswith("-100"):
+# Check if EVENT_LOGS is correct
+if EVENT_LOGS == -100 or not str(EVENT_LOGS).startswith("-100"):
     raise Exception(
         "Please enter a vaild Supergroup ID, A Supergroup ID starts with -100",
     )
@@ -56,7 +56,7 @@ class AsukaRobot(Client):
         Config.BOT_NAME = meh.first_name
         Config.BOT_USERNAME = meh.username
 
-        startmsg = await self.send_message(MESSAGE_DUMP, "<i>Starting Bot...</i>")
+        startmsg = await self.send_message(EVENT_LOGS, "<i>Starting Bot...</i>")
 
         # Show in Log that bot has started
         LOGGER.info(
@@ -69,7 +69,7 @@ class AsukaRobot(Client):
 
         LOGGER.info(f"Plugins Loaded: {cmd_list}")
 
-        # Send a message to MESSAGE_DUMP telling that the
+        # Send a message to EVENT_LOGS telling that the
         # bot has started and has loaded all plugins!
         await startmsg.edit_text(
             (
@@ -83,21 +83,21 @@ class AsukaRobot(Client):
         LOGGER.info("Bot Started Successfully!\n")
 
     async def stop(self):
-        """Stop the bot and send a message to MESSAGE_DUMP telling that the bot has stopped."""
+        """Stop the bot and send a message to EVENT_LOGS telling that the bot has stopped."""
         runtime = strftime("%Hh %Mm %Ss", gmtime(time() - UPTIME))
         LOGGER.info("Uploading logs before stopping...!\n")
-        # Send Logs to MESSAGE_DUMP and LOG_CHANNEL
+        # Send Logs to EVENT_LOGS and LOG_CHANNEL
         await self.send_document(
-            MESSAGE_DUMP,
+            EVENT_LOGS,
             document=LOGFILE,
             caption=(
                 "Bot Stopped!\n\n" f"Uptime: {runtime}\n" f"<code>{LOG_DATETIME}</code>"
             ),
         )
-        if MESSAGE_DUMP:
-            # LOG_CHANNEL is not necessary
+        if EVENT_LOGS:
+            # EVENT_LOGS is not necessary
             await self.send_document(
-                MESSAGE_DUMP,
+                EVENT_LOGS,
                 document=LOGFILE,
                 caption=f"Uptime: {runtime}",
             )
@@ -105,7 +105,7 @@ class AsukaRobot(Client):
         MongoDB.close()
         LOGGER.info(
             f"""Bot Stopped.
-            Logs have been uploaded to the MESSAGE_DUMP Group!
+            Logs have been uploaded to the EVENT_LOGS Group!
             Runtime: {runtime}s\n
         """,
         )
