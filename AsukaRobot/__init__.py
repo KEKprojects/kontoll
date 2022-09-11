@@ -2,13 +2,17 @@ import logging
 import os
 import sys
 import time
+import datetime
 import spamwatch
 import aiohttp
 from AsukaRobot.services.quoteapi import Quotly
 import telegram.ext as tg
 from redis import StrictRedis
 from Python_ARQ import ARQ
+from sys import stdout
 from pyrogram import Client, errors
+from os import mkdir, path
+from logging import FileHandler, StreamHandler
 from telethon.sessions import StringSession
 from telethon import TelegramClient
 from aiohttp import ClientSession
@@ -18,7 +22,17 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 quotly = Quotly()
 #--------------------#
 
-StartTime = time.time()
+LOG_DATETIME = datetime.now().strftime("%d_%m_%Y-%H_%M_%S")
+LOGDIR = f"{__name__}/logs"
+
+# Make Logs directory if it does not exits
+if not path.isdir(LOGDIR):
+    mkdir(LOGDIR)
+
+LOGFILE = f"{LOGDIR}/{__name__}_{LOG_DATETIME}_log.txt"
+
+file_handler = FileHandler(filename=LOGFILE)
+stdout_handler = StreamHandler(stdout)
 
 # enable logging
 logging.basicConfig(
