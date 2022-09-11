@@ -16,10 +16,9 @@ REPORT_GROUP = 12
 REPORT_IMMUNE_USERS = DRAGONS + TIGERS + WOLVES
 
 
-@bot.on_message(
-    command("reports") & (filters.private | admin_filter),
-)
-async def report_setting(_, m: Message):
+@run_async
+@user_admin
+def report_setting(_, m: Message):
     args = m.text.split()
     db = Reporting(m.chat.id)
 
@@ -65,8 +64,16 @@ async def report_setting(_, m: Message):
         )
 
 
-@bot.on_message(command("report") & filters.group)
-async def report_watcher(c: Alita, m: Message):
+@run_async
+@user_not_admin
+@loggable
+def report(update: Update, context: CallbackContext) -> str:
+    bot = context.bot
+    args = context.args
+    message = update.effective_message
+    chat = update.effective_chat
+    user = update.effective_user
+
     if m.chat.type != "supergroup":
         return
 
@@ -163,42 +170,60 @@ async def report_watcher(c: Alita, m: Message):
     return ""
 
 
-@bot.on_callback_query(filters.regex("^report_"))
-async def report_buttons(c: Alita, q: CallbackQuery):
-    splitter = (str(q.data).replace("report_", "")).split("=")
-    chat_id = int(splitter[0])
-    action = str(splitter[1])
-    user_id = int(splitter[2])
-    message_id = int(splitter[3])
-    if action == "kick":
+def __migrate__(old_chat_id, new_chat_id):
+    sql.migrate_chat(old_chat_id, new_chat_id)
+
+
+def __chat_settings__(chat_id, _):
+    return f"This chat is setup to send user reports to admins, via /report and @admin: `{sql.chat_should_report(chat_id)}`"
+
+
+def __user_settings__(user_id):
+    if sql.user_should_report(user_id) is True:
+        text = "You will receive reports from chats you're admin."
+    else:
+        text = "You will *not* receive reports from chats you're admin."
+    return text
+
+
+def buttons(update: Update, context: CallbackContext):
+    bot = context.bot
+    query = update.callback_query
+    splitter = query.data.replace("report_", "").split("=")
+    if splitter[1] == "kick":
         try:
-            await c.ban_chat_member(chat_id, user_id)
-            await q.answer("✅ Succesfully kicked")
-            await c.unban_chat_member(chat_id, user_id)
-            return
-        except RPCError as err:
-            await q.answer(
-                f"🛑 Failed to Kick\n<b>Error:</b>\n</code>{err}</code>",
-                show_alert=True,
-            )
-    elif action == "ban":
+            bot.kickChatMember(splitter[0], splitter[2])
+            bot.unbanChatMember(splitter[0], splitter[2])
+            query.answer("✅ Succesfully kicked")
+            return ""
+        except Exception as err:
+            query.answer("🛑 Failed to Punch")
+            bot.sendMessage(
+                text=f"Error: {err}",
+                chat_id=query.message.chat_id,
+                parse_mode=ParseMode.HTML)
+    elif splitter[1] == "banned":
         try:
-            await c.ban_chat_member(chat_id, user_id)
-            await q.answer("✅ Succesfully Banned")
-            return
-        except RPCError as err:
-            await q.answer(f"🛑 Failed to Ban\n<b>Error:</b>\n`{err}`", show_alert=True)
-    elif action == "del":
+            bot.kickChatMember(splitter[0], splitter[2])
+            query.answer("✅  Succesfully Banned")
+            return ""
+        except Exception as err:
+            bot.sendMessage(
+                text=f"Error: {err}",
+                chat_id=query.message.chat_id,
+                parse_mode=ParseMode.HTML)
+            query.answer("🛑 Failed to Ban")
+    elif splitter[1] == "delete":
         try:
-            await c.delete_messages(chat_id, message_id)
-            await q.answer("✅ Message Deleted")
-            return
-        except RPCError as err:
-            await q.answer(
-                f"🛑 Failed to delete message!\n<b>Error:</b>\n`{err}`",
-                show_alert=True,
-            )
-    return
+            bot.deleteMessage(splitter[0], splitter[3])
+            query.answer("✅ Message Deleted")
+            return ""
+        except Exception as err:
+            bot.sendMessage(
+                text=f"Error: {err}",
+                chat_id=query.message.chat_id,
+                parse_mode=ParseMode.HTML)
+            query.answer("🛑 Failed to delete message!")
 
 
 __help__ = """
