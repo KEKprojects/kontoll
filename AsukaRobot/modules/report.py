@@ -1,18 +1,22 @@
-from traceback import format_exc
+import html
 
-from pyrogram import filters
-from pyrogram.errors import RPCError
-from pyrogram.types import CallbackQuery, Message
+from AsukaRobot import (LOGGER, DRAGONS, TIGERS, WOLVES, dispatcher)
+from AsukaRobot.modules.helper_funcs.chat_status import (user_admin,
+                                                           user_not_admin)
+from AsukaRobot.modules.log_channel import loggable
+from AsukaRobot.modules.sql import reporting_sql as sql
+from telegram import (Chat, InlineKeyboardButton, InlineKeyboardMarkup,
+                      ParseMode, Update)
+from telegram.error import BadRequest, Unauthorized
+from telegram.ext import (CallbackContext, CallbackQueryHandler, CommandHandler,
+                          Filters, MessageHandler, run_async)
+from telegram.utils.helpers import mention_html
 
-from alita import LOGGER, SUPPORT_STAFF
-from alita.bot_class import Alita
-from alita.database.reporting_db import Reporting
-from alita.utils.custom_filters import admin_filter, command
-from alita.utils.kbhelpers import ikb
-from alita.utils.parser import mention_html
+REPORT_GROUP = 12
+REPORT_IMMUNE_USERS = DRAGONS + TIGERS + WOLVES
 
 
-@Alita.on_message(
+@bot.on_message(
     command("reports") & (filters.private | admin_filter),
 )
 async def report_setting(_, m: Message):
@@ -61,7 +65,7 @@ async def report_setting(_, m: Message):
         )
 
 
-@Alita.on_message(command("report") & filters.group)
+@bot.on_message(command("report") & filters.group)
 async def report_watcher(c: Alita, m: Message):
     if m.chat.type != "supergroup":
         return
@@ -159,7 +163,7 @@ async def report_watcher(c: Alita, m: Message):
     return ""
 
 
-@Alita.on_callback_query(filters.regex("^report_"))
+@bot.on_callback_query(filters.regex("^report_"))
 async def report_buttons(c: Alita, q: CallbackQuery):
     splitter = (str(q.data).replace("report_", "")).split("=")
     chat_id = int(splitter[0])
@@ -197,6 +201,28 @@ async def report_buttons(c: Alita, q: CallbackQuery):
     return
 
 
-__PLUGIN__ = "reporting"
+__help__ = """
+ • `/report <reason>`*:* reply to a message to report it to admins.
+ • `@admin`*:* reply to a message to report it to admins.
+*NOTE:* Neither of these will get triggered if used by admins.
 
-__alt_name__ = ["reports", "report"]
+*Admins only:*
+ • `/reports <on/off>`*:* change report setting, or view current status.
+   • If done in pm, toggles your status.
+   • If in group, toggles that groups's status.
+"""
+
+SETTING_HANDLER = CommandHandler("reports", report_setting)
+REPORT_HANDLER = CommandHandler("report", report, filters=Filters.group)
+ADMIN_REPORT_HANDLER = MessageHandler(Filters.regex(r"(?i)@admin(s)?"), report)
+
+REPORT_BUTTON_USER_HANDLER = CallbackQueryHandler(buttons, pattern=r"report_")
+dispatcher.add_handler(REPORT_BUTTON_USER_HANDLER)
+
+dispatcher.add_handler(SETTING_HANDLER)
+dispatcher.add_handler(REPORT_HANDLER, REPORT_GROUP)
+dispatcher.add_handler(ADMIN_REPORT_HANDLER, REPORT_GROUP)
+
+__mod_name__ = "Reporting"
+__handlers__ = [(REPORT_HANDLER, REPORT_GROUP),
+                (ADMIN_REPORT_HANDLER, REPORT_GROUP), (SETTING_HANDLER)]
