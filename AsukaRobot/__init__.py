@@ -22,6 +22,8 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 quotly = Quotly()
 #--------------------#
 
+StartTime = time.time()
+
 LOG_DATETIME = datetime.now().strftime("%d_%m_%Y-%H_%M_%S")
 LOGDIR = f"{__name__}/logs"
 
