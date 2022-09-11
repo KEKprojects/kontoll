@@ -8,7 +8,7 @@ from pyrogram.raw.all import layer
 from AsukaRobot import (
     API_HASH,
     API_ID,
-    BOT_TOKEN,
+    TOKEN,
     LOG_DATETIME,
     LOGFILE,
     LOGGER,
@@ -39,7 +39,7 @@ class AsukaRobot(Client):
 
         super().__init__(
             "Asuka_Robot",
-            bot_token=BOT_TOKEN,
+            bot_token=TOKEN,
             plugins=dict(root=f"{name}.plugins", exclude=NO_LOAD),
             api_id=APP_ID,
             api_hash=API_HASH,
