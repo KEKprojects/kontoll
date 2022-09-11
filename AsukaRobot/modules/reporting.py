@@ -18,26 +18,27 @@ REPORT_IMMUNE_USERS = DRAGONS + TIGERS + WOLVES
 
 @run_async
 @user_admin
-def report_setting(_, m: Message):
-    args = m.text.split()
-    db = Reporting(m.chat.id)
+def report_setting(_, m: Message, update: Update, context: CallbackContext):
+    bot, args = context.bot, context.args
+    chat = update.effective_chat
+    msg = update.effective_message
 
-    if m.chat.type == "private":
+    if chat.type == "PRIVATE":
         if len(args) >= 2:
             option = args[1].lower()
             if option in ("yes", "on", "true"):
                 db.set_settings(True)
                 LOGGER.info(f"{m.from_user.id} enabled reports for them")
-                await m.reply_text(
+                msg.reply_text(
                     "Turned on reporting! You'll be notified whenever anyone reports something in groups you are admin.",
                 )
 
             elif option in ("no", "off", "false"):
                 db.set_settings(False)
                 LOGGER.info(f"{m.from_user.id} disabled reports for them")
-                await m.reply_text("Turned off reporting! You wont get any reports.")
+                msg.reply_text("Turned off reporting! You wont get any reports.")
         else:
-            await m.reply_text(
+            msg.reply_text(
                 f"Your current report preference is: `{(db.get_settings())}`",
             )
     elif len(args) >= 2:
@@ -45,7 +46,7 @@ def report_setting(_, m: Message):
         if option in ("yes", "on", "true"):
             db.set_settings(True)
             LOGGER.info(f"{m.from_user.id} enabled reports in {m.chat.id}")
-            await m.reply_text(
+            msg.reply_text(
                 "Turned on reporting! Admins who have turned on reports will be notified when /report "
                 "or @admin is called.",
                 quote=True,
@@ -54,12 +55,12 @@ def report_setting(_, m: Message):
         elif option in ("no", "off", "false"):
             db.set_settings(False)
             LOGGER.info(f"{m.from_user.id} disabled reports in {m.chat.id}")
-            await m.reply_text(
+            msg.reply_text(
                 "Turned off reporting! No admins will be notified on /report or @admin.",
                 quote=True,
             )
     else:
-        await m.reply_text(
+        msg.reply_text(
             f"This group's current setting is: `{(db.get_settings())}`",
         )
 
@@ -67,7 +68,7 @@ def report_setting(_, m: Message):
 @run_async
 @user_not_admin
 @loggable
-def report(update: Update, context: CallbackContext) -> str:
+def report(_, m: Message, update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
     message = update.effective_message
@@ -87,14 +88,14 @@ def report(update: Update, context: CallbackContext) -> str:
         reported_msg_id = m.reply_to_message.message_id
         reported_user = m.reply_to_message.from_user
         chat_name = m.chat.title or m.chat.username
-        admin_list = await c.get_chat_members(m.chat.id, filter="administrators")
+        admin_list = chat.get_administrators()
 
         if reported_user.id == me.id:
-            await m.reply_text("Nice try.")
+            msg.reply_text("Nice try.")
             return
 
         if reported_user.id in SUPPORT_STAFF:
-            await m.reply_text("Uh? You reporting my support team?")
+            msg.reply_text("Uh? You reporting my support team?")
             return
 
         if m.chat.username:
@@ -105,7 +106,7 @@ def report(update: Update, context: CallbackContext) -> str:
             )
 
         else:
-            msg = f"{(await mention_html(m.from_user.first_name, m.from_user.id))} is calling for admins in '{chat_name}'!\n"
+            msg = f"{(mention_html(m.from_user.first_name, m.from_user.id))} is calling for admins in '{chat_name}'!\n"
 
         link_chat_id = str(m.chat.id).replace("-100", "")
         link = f"https://t.me/c/{link_chat_id}/{reported_msg_id}"  # message link
@@ -137,7 +138,7 @@ def report(update: Update, context: CallbackContext) -> str:
         )
         await m.reply_text(
             (
-                f"{(await mention_html(m.from_user.first_name, m.from_user.id))} "
+                f"{(mention_html(m.from_user.first_name, m.from_user.id))} "
                 "reported the message to the admins."
             ),
             quote=True,
@@ -150,14 +151,14 @@ def report(update: Update, context: CallbackContext) -> str:
                 continue
             if Reporting(admin.user.id).get_settings():
                 try:
-                    await c.send_message(
+                    c.send_message(
                         admin.user.id,
                         msg,
                         reply_markup=reply_markup,
                         disable_web_page_preview=True,
                     )
                     try:
-                        await m.reply_to_message.forward(admin.user.id)
+                        m.reply_to_message.forward(admin.user.id)
                         if len(m.text.split()) > 1:
                             await m.forward(admin.user.id)
                     except Exception:
