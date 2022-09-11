@@ -7,7 +7,7 @@ from pyrogram.raw.all import layer
 
 from AsukaRobot import (
     API_HASH,
-    APP_ID,
+    API_ID,
     BOT_TOKEN,
     LOG_DATETIME,
     LOGFILE,
