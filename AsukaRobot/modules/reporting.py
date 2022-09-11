@@ -82,7 +82,7 @@ def report(_, c: AsukaRobot, m: Message, update: Update, context: CallbackContex
     if not m.from_user:
         return
 
-    me = await c.get_me()
+    me = c.get_me()
     db = Reporting(m.chat.id)
 
     if (m.chat and m.reply_to_message) and (db.get_settings()):
@@ -102,8 +102,8 @@ def report(_, c: AsukaRobot, m: Message, update: Update, context: CallbackContex
         if m.chat.username:
             msg = (
                 f"<b>⚠️ Report: </b>{m.chat.title}\n"
-                f"<b> • Report by:</b> {(await mention_html(m.from_user.first_name, m.from_user.id))} (<code>{m.from_user.id}</code>)\n"
-                f"<b> • Reported user:</b> {(await mention_html(reported_user.first_name, reported_user.id))} (<code>{reported_user.id}</code>)\n"
+                f"<b> • Report by:</b> {(mention_html(m.from_user.first_name, m.from_user.id))} (<code>{m.from_user.id}</code>)\n"
+                f"<b> • Reported user:</b> {(mention_html(reported_user.first_name, reported_user.id))} (<code>{reported_user.id}</code>)\n"
             )
 
         else:
@@ -137,7 +137,7 @@ def report(_, c: AsukaRobot, m: Message, update: Update, context: CallbackContex
         LOGGER.info(
             f"{m.from_user.id} reported msgid-{m.reply_to_message.message_id} to admins in {m.chat.id}",
         )
-        await m.reply_text(
+        m.reply_text(
             (
                 f"{(mention_html(m.from_user.first_name, m.from_user.id))} "
                 "reported the message to the admins."
@@ -161,7 +161,7 @@ def report(_, c: AsukaRobot, m: Message, update: Update, context: CallbackContex
                     try:
                         m.reply_to_message.forward(admin.user.id)
                         if len(m.text.split()) > 1:
-                            await m.forward(admin.user.id)
+                            m.forward(admin.user.id)
                     except Exception:
                         pass
                 except Exception:
