@@ -1,5 +1,6 @@
 import html
 
+from AsukaRobot.bot_db import AsukaRobot
 from AsukaRobot import (LOGGER, DRAGONS, TIGERS, WOLVES, dispatcher)
 from AsukaRobot.modules.helper_funcs.chat_status import (user_admin,
                                                            user_not_admin)
@@ -68,7 +69,7 @@ def report_setting(_, m: Message, update: Update, context: CallbackContext):
 @run_async
 @user_not_admin
 @loggable
-def report(_, m: Message, update: Update, context: CallbackContext) -> str:
+def report(_, c: AsukaRobot, m: Message, update: Update, context: CallbackContext) -> str:
     bot = context.bot
     args = context.args
     message = update.effective_message
