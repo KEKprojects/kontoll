@@ -14,7 +14,6 @@ from AsukaRobot import (
     LOGGER,
     EVENT_LOGS,
     NO_LOAD,
-    UPTIME,
     WORKERS,
     load_cmds,
 )
