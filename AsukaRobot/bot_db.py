@@ -14,11 +14,10 @@ from AsukaRobot import (
     LOGGER,
     EVENT_LOGS,
     NO_LOAD,
-    WORKERS,
-    load_cmds,
+    WORKERS
 )
 from AsukaRobot import mongo
-from AsukaRobot.plugins import all_plugins
+# from AsukaRobot.plugins import all_plugins
 from config import config
 
 INITIAL_LOCK = RLock()
@@ -39,7 +38,7 @@ class AsukaRobot(Client):
         super().__init__(
             "Asuka_Robot",
             bot_token=TOKEN,
-            plugins=dict(root=f"{name}.plugins", exclude=NO_LOAD),
+#            plugins=dict(root=f"{name}.plugins", exclude=NO_LOAD),
             api_id=APP_ID,
             api_hash=API_HASH,
             workers=WORKERS,
@@ -64,9 +63,9 @@ class AsukaRobot(Client):
         LOGGER.info(f"Python Version: {python_version()}\n")
 
         # Get cmds and keys
-        cmd_list = await load_cmds(await all_plugins())
+#        cmd_list = await load_cmds(await all_plugins())
 
-        LOGGER.info(f"Plugins Loaded: {cmd_list}")
+#        LOGGER.info(f"Plugins Loaded: {cmd_list}")
 
         # Send a message to EVENT_LOGS telling that the
         # bot has started and has loaded all plugins!
@@ -74,8 +73,8 @@ class AsukaRobot(Client):
             (
                 f"<b><i>@{meh.username} started on Pyrogram v{__version__} (Layer - {layer})</i></b>\n"
                 f"\n<b>Python:</b> <u>{python_version()}</u>\n"
-                "\n<b>Loaded Plugins:</b>\n"
-                f"<i>{cmd_list}</i>\n"
+#                "\n<b>Loaded Plugins:</b>\n"
+#                f"<i>{cmd_list}</i>\n"
             ),
         )
 
