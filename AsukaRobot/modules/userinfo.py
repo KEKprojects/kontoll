@@ -31,7 +31,6 @@ from AsukaRobot import (
     DEMONS,
     TIGERS,
     WOLVES,
-    INFOPIC,
     dispatcher,
     sw,
     StartTime,
@@ -358,17 +357,17 @@ def info(update: Update, context: CallbackContext):
         if mod_info:
             text += "\n\n" + mod_info
 
-    if INFOPIC:
-        try:
-            profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
-            context.bot.sendChatAction(chat.id, "upload_photo")
-            context.bot.send_photo(
-            chat.id,
-            photo=profile,
-            caption=(text),
-            reply_markup=InlineKeyboardMarkup(buttons),
-                parse_mode=ParseMode.HTML,            
-        )
+#    if INFOPIC:
+#        try:
+#            profile = context.bot.get_user_profile_photos(user.id).photos[0][-1]
+#            context.bot.sendChatAction(chat.id, "upload_photo")
+#            context.bot.send_photo(
+#            chat.id,
+#            photo=profile,
+#            caption=(text),
+#            reply_markup=InlineKeyboardMarkup(buttons),
+#                parse_mode=ParseMode.HTML,            
+#        )
         # Incase user don't have profile pic, send normal text
         except IndexError:
             message.reply_text(
