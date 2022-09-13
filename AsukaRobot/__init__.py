@@ -54,6 +54,16 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     )
     quit(1)
 
+try:
+    if environ.get("ENV"):
+        from AsukaRobot.vars import Config
+    else:
+        from AsukaRobot.vars import Development as Config
+#except Exception as ef:
+#    LOGGER.error(ef)  # Print Error
+#    LOGGER.error(format_exc())
+#    sysexit(1)
+
 ENV = bool(os.environ.get('ENV', False))
 
 if ENV:
