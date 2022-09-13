@@ -12,7 +12,7 @@ from AsukaRobot import (
     LOG_DATETIME,
     LOGFILE,
     LOGGER,
-    EVENT_LOGS,
+    MESSAGE_DUMP,
     NO_LOAD,
     WORKERS
 )
@@ -22,8 +22,8 @@ from config import config
 
 INITIAL_LOCK = RLock()
 
-# Check if EVENT_LOGS is correct
-if EVENT_LOGS == -100 or not str(EVENT_LOGS).startswith("-100"):
+# Check if MESSAGE_DUMP is correct
+if MESSAGE_DUMP == -100 or not str(MESSAGE_DUMP).startswith("-100"):
     raise Exception(
         "Please enter a vaild Supergroup ID, A Supergroup ID starts with -100",
     )
@@ -54,7 +54,7 @@ class AsukaRobot(Client):
         Config.BOT_NAME = meh.first_name
         Config.BOT_USERNAME = meh.username
 
-        startmsg = await self.send_message(EVENT_LOGS, "<i>Starting Bot...</i>")
+        startmsg = await self.send_message(MESSAGE_DUMP, "<i>Starting Bot...</i>")
 
         # Show in Log that bot has started
         LOGGER.info(
