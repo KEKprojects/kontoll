@@ -102,10 +102,6 @@
          "description": "Enforce gbans across new groups as well as old groups. When a gbanned user talks, he will be banned.",
          "value": "True"
       },
-      "INFOPIC": {
-         "description": "Show picture when used /info.",
-         "value": "True"
-      },
       "MONGO_DB_URI": {
          "description": "Your Mongo DB url.",
          "required": false,
