@@ -181,6 +181,7 @@ else:
         raise Exception(
             "Your tiger users list does not contain valid integers.")
 
+    MESSAGE_DUMP = Config.MESSAGE_DUMP
     EVENT_LOGS = Config.EVENT_LOGS
     WEBHOOK = Config.WEBHOOK
     URL = Config.URL
