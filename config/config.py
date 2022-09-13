@@ -15,7 +15,7 @@ from aiohttp import ClientSession
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 
 
-#    INFOPIC = str(getenv('INFOPIC', "true"))
+    INFOPIC = (os.evrivon.get('INFOPIC', "true"))
     EVENT_LOGS = getenv('EVENT_LOGS', "-100")
     WEBHOOK = int(getenv('WEBHOOK', "False"))
     ARQ_API_URL = getenv("ARQ_API_URL", "https://thearq.tech/")
