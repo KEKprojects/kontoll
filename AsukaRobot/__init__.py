@@ -92,7 +92,7 @@ if ENV:
         raise Exception(
             "Your tiger users list does not contain valid integers.")
 
-    INFOPIC = bool(os.environ.get('INFOPIC', False))
+#    INFOPIC = bool(os.environ.get('INFOPIC', False))
     EVENT_LOGS = os.environ.get('EVENT_LOGS', None)
     WEBHOOK = bool(os.environ.get('WEBHOOK', False))
     ARQ_API_URL = os.environ.get("ARQ_API_URL", None)
@@ -205,7 +205,7 @@ else:
     SUPPORT_CHAT = Config.SUPPORT_CHAT
     SPAMWATCH_SUPPORT_CHAT = Config.SPAMWATCH_SUPPORT_CHAT
     SPAMWATCH_API = Config.SPAMWATCH_API
-    INFOPIC = Config.INFOPIC
+#    INFOPIC = Config.INFOPIC
     ARQ_API_URL = Config.ARQ_API_URL
     ARQ_API_KEY = Config.ARQ_API_KEY
     BOT_NAME = Config.BOT_NAME
