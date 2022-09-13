@@ -64,10 +64,12 @@ except Exception as ef:
     LOGGER.error(format_exc())
     sysexit(1)
 
-ENV = bool(os.environ.get('ENV', False))
 
-if ENV:
-    TOKEN = os.environ.get('TOKEN', None)
+
+    ENV = bool(os.environ.get('ENV', False))
+
+    if ENV:
+           TOKEN = os.environ.get('TOKEN', None)
 
     try:
         OWNER_ID = int(os.environ.get('OWNER_ID', None))
